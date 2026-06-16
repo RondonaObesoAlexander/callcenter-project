@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  asterisk:
+    build: ./asterisk
+    ports:
+      - "5060:5060/udp"   # SIP
+      - "8088:8088"       # ARI HTTP
+      - "5038:5038"       # AMI (opcional)
+    networks:
+      - callnet
+    depends_on:
+      - redis
+      - mongo
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - callnet
+
+  mongo:
+    image: mongo:6
+    ports:
+      - "27017:27017"
+    networks:
+      - callnet
+    volumes:
+      - mongo_data:/data/db
+
+networks:
+  callnet:
+
+volumes:
+  mongo_data:
